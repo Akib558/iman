@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prayer_app/quran_page.dart';
 import 'dart:ui';
 import 'package:provider/provider.dart';
 import 'package:prayer_app/button_page.dart';
@@ -11,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  double ele = 4;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +40,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: Colors.white,
+                          // color: Colors.white,
                         ),
                       ),
                     ),
@@ -79,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.fromLTRB(0, 20, 0 , 0),
                           child: GestureDetector(
                             child: Material(
-                              elevation: 10,
+                              elevation: ele,
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
                                 // margin: EdgeInsets.all(20),
@@ -88,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                                 
                                 // margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
                                 padding: EdgeInsets.fromLTRB(120, 5, 120, 5),
-                                child: Image.asset('assets/images/quran.png'),
+                                child: Image.asset('assets/images/quran.png',),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: Color.fromARGB(255, 215, 216, 215),
@@ -96,7 +98,13 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             onTap: () {
-                              print('its working');
+                              Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return QuranPage();
+                          },
+                        ),
+                    );
                             },
                           ),
                         ),
@@ -112,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.fromLTRB(0, 2.5, 2.5, 2.5),
                                 child: GestureDetector(
                                   child: Material(
-                                    elevation: 10,
+                                    elevation: ele,
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       // margin: EdgeInsets.all(20),
@@ -140,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.fromLTRB(2.5,2.5,0,2.5),
                                 child: GestureDetector(
                                   child: Material(
-                                    elevation: 10,
+                                    elevation: ele,
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       // margin: EdgeInsets.all(20),
@@ -176,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.fromLTRB(0, 2.5, 2.5, 2.5),
                                 child: GestureDetector(
                                   child: Material(
-                                    elevation: 10,
+                                    elevation: ele,
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       // margin: EdgeInsets.all(20),
@@ -204,7 +212,7 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.fromLTRB(2.5,2.5,0,2.5),
                                 child: GestureDetector(
                                   child: Material(
-                                    elevation: 10,
+                                    elevation: ele,
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       // margin: EdgeInsets.all(20),
@@ -240,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.fromLTRB(0, 2.5, 2.5, 2.5),
                                 child: GestureDetector(
                                   child: Material(
-                                    elevation: 10,
+                                    elevation: ele,
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       // margin: EdgeInsets.all(20),
@@ -268,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.fromLTRB(2.5,2.5,0,2.5),
                                 child: GestureDetector(
                                   child: Material(
-                                    elevation: 10,
+                                    elevation: ele,
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       // margin: EdgeInsets.all(20),
@@ -308,8 +316,8 @@ class _HomePageState extends State<HomePage> {
         unselectedFontSize: 10,
         // backgroundColor: Colors.blue,
         type: BottomNavigationBarType.fixed,
-        fixedColor: Colors.red,
-        unselectedItemColor: Colors.blue,
+        // fixedColor: Colors.red,
+        unselectedItemColor: const Color.fromARGB(255, 108, 108, 108),
         
         // currentIndex: HomePage(),
         // // onTap: (value){
@@ -318,9 +326,9 @@ class _HomePageState extends State<HomePage> {
         // //   });
         // // },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home),
+          BottomNavigationBarItem(icon: Image.asset('assets/images/quran.png', height: 30, width: 30,),
           label: 'Quran',),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart),
+          BottomNavigationBarItem(icon: Image.asset('assets/images/quran.png', height: 30, width: 30,),
           label: 'Explore',),
           BottomNavigationBarItem(icon: Icon(Icons.home),
           label: 'Home',),
