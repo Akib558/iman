@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:prayer_app/combined_output.dart';
 
 // String surah='1';
 
@@ -86,18 +87,36 @@ class _SurahPageState extends State<SurahPage> {
                 strokeWidth: 10,
               ));
             }
+
+
+            final surahIndex = int.parse(widget.surahNumber)-1;
+            Map<String, dynamic> verses = allSurahs[surahIndex]["verse"] as Map<String, dynamic>;
+
+            List<String> verseValues = [];
+            verses.forEach((key, value) {
+            verseValues.add(value);
+            });
+
+            print(verseValues);
+
+
+
             final data = snapshot.data!;
             final mainlist = data['data']['ayahs'];
             // final Map<String, dynamic> mainlist = data['data'];
-            print(mainlist[0]['text']);
+            // print(mainlist[0]['text']);
             // print("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ".length);
             // return Placeholder();
             return ListView.builder(
               itemCount: mainlist.length,
               itemBuilder: (context, index) {
-                String val = mainlist[index]['text'];
-                int numNum = mainlist[index]['numberInSurah'];
-                String num = numNum.toString();
+                
+                String val = verseValues[index];
+                int numNum = index;
+
+                // String val = mainlist[index]['text'];
+                // int numNum = mainlist[index]['numberInSurah'];
+                // String num = numNum.toString();
                 val = val.trimLeft();
                 val = val.trimRight();
                 

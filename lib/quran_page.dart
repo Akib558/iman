@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:prayer_app/surah_page.dart';
-
+import 'package:prayer_app/surah_name.dart';
 
 class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
@@ -76,7 +76,11 @@ class _QuranPageState extends State<QuranPage> {
           return ListView.builder(
             itemCount: mainlist.length,
             itemBuilder: (context, index) {
-              final val = mainlist[index];
+              // final val = mainlist[index];
+              final surahName = surahNames[index]["title"] as String;
+              final surahNameArabic = surahNames[index]["titleAr"] as String;
+              final surahVerses = surahNames[index]["count"];
+              final surahIndex = int.parse(surahNames[index]["index"] as String);
               return Container(
                 padding: EdgeInsets.fromLTRB(10,5,10,5),
                 // decoration: BoxDecoration(
@@ -87,7 +91,8 @@ class _QuranPageState extends State<QuranPage> {
                     Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return SurahPage(surahNumber:val['number'].toString());
+                            // return SurahPage(surahNumber:val['number'].toString());
+                            return SurahPage(surahNumber:surahIndex.toString());
                           },
                         ),
                     );
@@ -107,7 +112,8 @@ class _QuranPageState extends State<QuranPage> {
                           children: [
                             Column(
                               children: [
-                                Text(val['number'].toString()+'. ',
+                                // Text(val['number'].toString()+'. ',
+                                Text(surahIndex.toString()+'. ',
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -119,17 +125,21 @@ class _QuranPageState extends State<QuranPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(val['englishName'],
+                                Text(
+                                  // val['englishName'],
+                                  surahName,
                                 style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),),
-                                Text(val['numberOfAyahs'].toString()+' verses'),
-
+                                // Text(val['numberOfAyahs'].toString()+' verses'),
+                                Text(surahVerses.toString()+' verses'),
                               ],
                             ),
                             Spacer(),
-                            Text(val['name'],
+                            Text(
+                              // val['name'],
+                              surahNameArabic,
                             style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
