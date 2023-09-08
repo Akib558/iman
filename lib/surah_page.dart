@@ -2,14 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:prayer_app/combined_output.dart';
+import 'package:prayer_app/importanFiles/surahInBangla.dart';
+import 'package:prayer_app/importanFiles/surahInEnglish.dart';
+import 'package:prayer_app/surah_name.dart';
 
 // String surah='1';
 
 class SurahPage extends StatefulWidget {
   final String surahNumber;
+  final int surah_start_index;
+  final int surah_end_index;
+  final bool from_search;
   const SurahPage({
     super.key,
     required this.surahNumber,
+    required this.surah_start_index,
+    required this.surah_end_index,
+    required this.from_search,
   });
 
   @override
@@ -17,230 +26,142 @@ class SurahPage extends StatefulWidget {
 }
 
 class _SurahPageState extends State<SurahPage> {
-  late Future<Map<String, dynamic>> surahlist;
-  // late String surah;
-  // late List<dynamic> mainlist;
-  // surah = "114";
-  Future<Map<String, dynamic>> getSurahFull() async {
-    try {
-      // String cityName = 'Dhaka';
-      String demo = "http://api.alquran.cloud/v1/surah/";
-      // demo += number.toString();
-      demo += widget.surahNumber;
-      demo += "/ar.asad";
-      print(
-          '---------------=======================-----------------------------------------------------');
-      print(demo);
-      print(
-          '---------------=======================-----------------------------------------------------');
+  late String surahName;
+  late int surahIndex;
+  late int surahLength;
 
-      final res = await http
-          // .get(Uri.parse('http://api.alquran.cloud/v1/surah/{surahNumber}/ar.asad'));
-          .get(Uri.parse(demo));
+  late int start;
+  late int end;
 
-      final data = jsonDecode(res.body);
-      if (data['code'] != 200) {
-        throw "An unexpected errorrrrrrrrrrrrr";
-      }
-
-      // print(data["data"][0]);
-      // print(data["data"][1]);
-      // print(data["data"][2]);
-
-      // mainlist = data['data'];
-
-      return data;
-
-      // print(data['list'][0]['main']['temp']);
-
-      // temp = data['list'][0]['main']['temp'] - 273;
-    } catch (e) {
-      throw e.toString();
-    }
-  }
+  List<List<String>> verseValues = [];
+  // List<String> verseValues2 = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    //print(widget.from_search);
+    start = widget.surah_start_index;
+    end = widget.surah_end_index;
     // surah = surahNumber;
-    surahlist = getSurahFull();
-    // print(mainlist[0]);
-    // mainlist = surahlist['data'];
-    // print(surahlist['data'][0]);
+// mainlist = surahlist['data'];
+    surahIndex = int.parse(widget.surahNumber) - 1;
+    surahName = surahEnglish[surahIndex]["transliteration"] as String;
+    List<Map<String, dynamic>> versesList =
+        surahEnglish[surahIndex]["verses"] as List<Map<String, dynamic>>;
+    List<Map<String, dynamic>> versesList2 =
+        surahBangla[surahIndex]["verses"] as List<Map<String, dynamic>>;
+    verseValues.add([
+      "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ",
+      "In the name of Allah, the Entirely Merciful, the Especially Merciful",
+      "শুরু করছি আল্লাহর নামে যিনি পরম করুণাময়, অতি দয়ালু।"
+    ]);
+    for (var i = 0; i < versesList.length; i++) {
+      if (!(surahIndex == 0 && i == 0)) {
+        List<String> kk = [
+          versesList[i]["text"],
+          versesList[i]["translation"],
+          versesList2[i]["translation"]
+        ];
+        verseValues.add(kk);
+      }
+      // verseValues.add(versesList[i]["text"]);
+    }
+    surahLength = verseValues.length;
+    // //print(surahlist['data'][0]);
   }
+
+  int translateAyah = 0;
+  int translateAyah_en = 0;
 
   Widget build(BuildContext context) {
     // surah = widget.surahNumber;
     return Scaffold(
       appBar: AppBar(
-        title: Text('HELLO'),
+        title: Text(surahName),
       ),
       body: Container(
-        child: FutureBuilder(
-          future: surahlist,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                color: Color.fromARGB(255, 0, 0, 0),
-                strokeWidth: 10,
-              ));
+          child: ListView.builder(
+        itemCount: surahLength,
+        itemBuilder: (context, index) {
+          //print("start: ${start}, end: ${end}");
+          if (index >= start && index <= end) {
+            //print(surahEnglish.length);
+            String val = verseValues[index][0];
+            String val_en = verseValues[index][1];
+            String val_bn = verseValues[index][2];
+            int numNum = index;
+            if (index != 0) {
+              val = val + "((" + index.toString() + "))";
+            }
+            // String val = mainlist[index]['text'];
+            // int numNum = mainlist[index]['numberInSurah'];
+            // String num = numNum.toString();
+            val = val.trimLeft();
+            val = val.trimRight();
+            String translateAyah_val = val_bn;
+            if (translateAyah_en == 1) {
+              translateAyah_val = val_en;
             }
 
-
-            final surahIndex = int.parse(widget.surahNumber)-1;
-            Map<String, dynamic> verses = allSurahs[surahIndex]["verse"] as Map<String, dynamic>;
-
-            List<String> verseValues = [];
-            verses.forEach((key, value) {
-            verseValues.add(value);
-            });
-
-            print(verseValues);
-
-
-
-            final data = snapshot.data!;
-            final mainlist = data['data']['ayahs'];
-            // final Map<String, dynamic> mainlist = data['data'];
-            // print(mainlist[0]['text']);
-            // print("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ".length);
-            // return Placeholder();
-            return ListView.builder(
-              itemCount: mainlist.length,
-              itemBuilder: (context, index) {
-                
-                String val = verseValues[index];
-                int numNum = index;
-
-                // String val = mainlist[index]['text'];
-                // int numNum = mainlist[index]['numberInSurah'];
-                // String num = numNum.toString();
-                val = val.trimLeft();
-                val = val.trimRight();
-                
-                // if (index == 0 &&
-                //     val.length !=
-                //         'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ '.length) {
-                //   // String tmp = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
-                //   val = val.replaceFirst(
-                //       'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ', '');
-                //   return Container(
-                //       child: Row(
-                //         children: [
-                //           Text(num,
-                //           softWrap: true,)
-                //         ],
-                //       )
-                  
-                //   );
-                //   // val = val+'\n' +'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ';
-                //   // val =
-
-                //   // tmp += '\n'+val;
-
-                //   // val = tmp;
-                // }
-                // else if(index == 0){
-                //   return Container(
-                //       child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.end,
-                //     children: [
-                //       Text(
-                //         'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ',
-                //         style: TextStyle(
-                //           fontFamily: 'arabic1',
-                //           fontSize: 50,
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       ),
-                //     ],
-                //   ));
-                // }
-                return Container(
+            return GestureDetector(
+              child: Card(
+                elevation: 5,
+                child: Container(
                   padding: EdgeInsets.all(5),
                   margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 227, 227, 227),
-                    borderRadius: BorderRadius.circular(20)
-                  ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      // mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: RichText(
-                            text: TextSpan(
+                      // color: const Color.fromARGB(255, 227, 227, 227),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: translateAyah == 1 && index != 0
+                      ? Column(
+                          children: [
+                            Text(
+                              "${val}",
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'arabic1',
                                 fontSize: 30,
-                                // color: Colors.black
                               ),
-                            
-                              children: <TextSpan>[
-                                TextSpan(text: val, style: TextStyle(color: Colors.black)),
-                                TextSpan(text:"        (${numNum})      ", 
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold
-                                  )),
-                              ]
                             ),
-                          ),
+                            GestureDetector(
+                                onTap: () {
+                                  translateAyah_en = 1 - translateAyah_en;
+                                  setState(() {});
+                                },
+                                child: Text("${translateAyah_val}")),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Text(
+                              "${val}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'arabic1',
+                                fontSize: 32,
+                              ),
+                            ),
+                          ],
                         ),
-                        // Text(val+"   (${numNum})   ",
-                        // style: TextStyle(
-                        //   fontFamily: 'arabic1',
-                        //   fontSize: 30,
-                        // ),
-                        // softWrap: true,
-                        // textDirection: TextDirection.rtl,),
-                        
-                      ],
-                    ),
-                );
-                // val = val.replaceRange(39, val.length, '')+"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيم\n ";
+                ),
+              ),
+              onTap: () {
+                ////print("Ayah is clicked");
+                setState(() {
+                  translateAyah = 1 - translateAyah;
+                });
               },
             );
-          },
-        ),
-      ),
+            // val = val.replaceRange(39, val.length, '')+"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيم\n ";
+          } else {
+            return Container();
+          }
+        },
+      )),
     );
   }
 }
 
 // import 'package:flutter/material.dart';
 
-class CircleNumber extends StatelessWidget {
-  final int number;
-  final double circleSize;
-  final TextStyle textStyle;
-  final Color circleColor;
-
-  CircleNumber({
-    required this.number,
-    this.circleSize = 30.0,
-    this.textStyle = const TextStyle(color: Colors.white, fontSize: 16),
-    this.circleColor = Colors.blue,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: circleSize,
-      height: circleSize,
-      decoration: BoxDecoration(
-        color: circleColor,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Text(
-          number.toString(),
-          style: textStyle,
-        ),
-      ),
-    );
-  }
-}
