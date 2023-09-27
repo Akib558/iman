@@ -22,6 +22,7 @@ class _QuranPageState extends State<QuranPage> {
 
   int surahliststatus = 1;
   double _fontSize = 30.0;
+
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> filteredList = surahNames
@@ -29,6 +30,10 @@ class _QuranPageState extends State<QuranPage> {
             .toLowerCase()
             .contains(searchController.text.toLowerCase()))
         .toList();
+    void updateParent() {
+      setState(() {});
+    }
+
     // ////print(surahlist);
     return Scaffold(
       appBar: AppBar(

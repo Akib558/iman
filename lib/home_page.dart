@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 0, 77, 78),
         title: Text(
-          "Deen",
+          "Iman",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,

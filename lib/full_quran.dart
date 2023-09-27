@@ -43,7 +43,7 @@ class _FullQuranState extends State<FullQuran> {
       ),
       body: GestureDetector(
         onScaleUpdate: (details) {
-          double newFontSize = _fontSize * details.scale;
+          double newFontSize = _fontSize * details.scale * 1.2;
           setState(() {
             _fontSize = newFontSize.clamp(
                 20.0, 60.0); // Limit font size between 10 and 50
@@ -199,6 +199,10 @@ class _FullQuranState extends State<FullQuran> {
                     ));
               }
 
+              void updateParent() {
+                setState(() {});
+              }
+
               void showPopup(BuildContext context) {
                 setState(() {
                   isPopupVisible = true;
@@ -210,29 +214,48 @@ class _FullQuranState extends State<FullQuran> {
                 showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
-                    return Container(
-                      height: 100,
-                      width: double.infinity, // Adjust the height as needed
-                      child: Column(
-                        children: [
-                          // Content for your pop-up section
-                          Text(
-                            'Select Language',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          Container(
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  selectLang(0, "Arabic"),
-                                  selectLang(1, "Bangla"),
-                                  selectLang(2, "English"),
-                                ]),
-                          ),
-                        ],
-                      ),
-                    );
+                    return StatefulBuilder(builder: (BuildContext context,
+                        StateSetter setState /*You can rename this!*/) {
+                      return Container(
+                        height: 100,
+                        width: double.infinity, // Adjust the height as needed
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 20,
+                              width: 200,
+                              child: Slider(
+                                value: _fontSize,
+                                min: 30.0,
+                                max: 100.0,
+                                onChanged: (double value) {
+                                  updateParent();
+                                  setState(() {
+                                    _fontSize =
+                                        value; // Update the variable when the slider changes
+                                  });
+                                },
+                              ),
+                            ),
+                            // Content for your pop-up section
+                            Text(
+                              'Select Language',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Container(
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    selectLang(0, "Arabic"),
+                                    selectLang(1, "Bangla"),
+                                    selectLang(2, "English"),
+                                  ]),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
                   },
                 );
               }

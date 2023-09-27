@@ -189,7 +189,7 @@ class _TasbihPageState extends State<TasbihPage> {
                                 onTap: () {
                                   setState(() {
                                     dhikir.removeAt(index);
-                                    myBox.put("dhikirList", dhikirList);
+                                    myBox.put("dhikirList", dhikir);
                                   });
                                 },
                                 child: Icon(

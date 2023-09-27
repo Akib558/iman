@@ -74,8 +74,57 @@ class _SurahPageState extends State<SurahPage> {
   int translateAyah = 0;
   int translateAyah_en = 0;
 
+  double _fontSize = 30.0;
+
   Widget build(BuildContext context) {
     // surah = widget.surahNumber;
+    void showPopup(BuildContext context) {
+      setState(() {
+        // isPopupVisible = true;
+      });
+
+      void updateParent() {
+        setState(() {});
+      }
+
+      // show
+      // showDialog(
+      // showDialog(context: context, builder: builder)
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (BuildContext context,
+              StateSetter setState /*You can rename this!*/) {
+            return Container(
+              height: 100,
+              width: double.infinity, // Adjust the height as needed
+              child: Column(
+                children: [
+                  Container(
+                    height: 20,
+                    width: 200,
+                    child: Slider(
+                      value: _fontSize,
+                      min: 30.0,
+                      max: 100.0,
+                      onChanged: (double value) {
+                        updateParent();
+                        setState(() {
+                          _fontSize =
+                              value; // Update the variable when the slider changes
+                        });
+                      },
+                    ),
+                  ),
+                  // Content for your pop-up section
+                ],
+              ),
+            );
+          });
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(surahName),
@@ -121,7 +170,7 @@ class _SurahPageState extends State<SurahPage> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'arabic1',
-                                fontSize: 30,
+                                fontSize: _fontSize,
                               ),
                             ),
                             GestureDetector(
@@ -129,7 +178,13 @@ class _SurahPageState extends State<SurahPage> {
                                   translateAyah_en = 1 - translateAyah_en;
                                   setState(() {});
                                 },
-                                child: Text("${translateAyah_val}")),
+                                child: Text(
+                                  "${translateAyah_val}",
+                                  style: TextStyle(
+                                    // fontFamily: 'arabic1',
+                                    fontSize: _fontSize - 15,
+                                  ),
+                                )),
                           ],
                         )
                       : Column(
@@ -139,13 +194,16 @@ class _SurahPageState extends State<SurahPage> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'arabic1',
-                                fontSize: 32,
+                                fontSize: _fontSize,
                               ),
                             ),
                           ],
                         ),
                 ),
               ),
+              onLongPress: () {
+                showPopup(context);
+              },
               onTap: () {
                 ////print("Ayah is clicked");
                 setState(() {

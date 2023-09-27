@@ -79,13 +79,13 @@ class _HadithDetailsPageState extends State<HadithDetailsPage> {
     );
   }
 
-  String hadithText(int index) {
+  String hadithText(int index, int lang) {
     String val = "";
     RegExp arabicPattern = RegExp(
         r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]');
-    if (index == 0) {
+    if (lang == 0) {
       val = hadiths0[index + h_f]["text"];
-    } else if (index == 1) {
+    } else if (lang == 1) {
       val = hadiths1[index + h_f]["text"];
       val = val.replaceAll(arabicPattern, '');
     } else {
@@ -151,7 +151,7 @@ class _HadithDetailsPageState extends State<HadithDetailsPage> {
                             child: Center(
                               child: Text(
                                 // metadata_sections_list[index],
-                                hadithText(lang),
+                                hadithText(index, lang),
                                 // lang == 0
                                 //     ? hadiths0[index + h_f]["text"]
                                 //     : hadiths1[index + h_f]["text"],
