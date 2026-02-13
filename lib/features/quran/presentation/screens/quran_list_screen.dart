@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:prayer_app/core/theme/app_colors.dart';
 import 'package:prayer_app/core/theme/text_styles.dart';
 import 'package:prayer_app/features/quran/domain/surah.dart';
 import 'package:prayer_app/features/quran/presentation/providers/quran_providers.dart';
+import 'package:prayer_app/features/quran/presentation/screens/ayah_reading_screen.dart';
+import 'package:prayer_app/features/quran/presentation/widgets/enhanced_continue_reading_card.dart';
 import 'package:prayer_app/full_quran.dart';
 
 class QuranListScreen extends ConsumerWidget {
@@ -13,10 +16,25 @@ class QuranListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(searchQueryProvider); // Track for rebuilds
     final surahs = ref.watch(filteredSurahsProvider);
+    final searchQuery = ref.watch(searchQueryProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quran'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.menu_book),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FullQuran(fromHome: false),
+                ),
+              );
+            },
+            tooltip: 'Page View',
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -56,9 +74,17 @@ class QuranListScreen extends ConsumerWidget {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: surahs.length,
+                itemCount: surahs.length + (searchQuery.isEmpty ? 1 : 0),
                 itemBuilder: (context, index) {
-                  final surah = surahs[index];
+                  // Show continue reading card at the top when not searching
+                  if (searchQuery.isEmpty && index == 0) {
+                    return EnhancedContinueReadingCard(
+                      onTap: () => _continueReading(context),
+                    );
+                  }
+                  
+                  final surahIndex = searchQuery.isEmpty ? index - 1 : index;
+                  final surah = surahs[surahIndex];
                   return _SurahCard(
                     surah: surah,
                     onTap: () => _navigateToReader(context, surah),
@@ -73,14 +99,46 @@ class QuranListScreen extends ConsumerWidget {
   }
 
   void _navigateToReader(BuildContext context, Surah surah) {
-    // Navigate to the existing FullQuran page
-    // We keep using the old implementation for now
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const FullQuran(fromHome: false),
+        builder: (context) => AyahReadingScreen(
+          surahNumber: surah.surahNumber,
+          initialAyahIndex: 0,
+        ),
       ),
     );
+  }
+
+  void _continueReading(BuildContext context) {
+    final myBox = Hive.box("DB1");
+    final readingPosition = myBox.get("quran_reading_position");
+    
+    if (readingPosition != null && readingPosition is Map) {
+      final surahNumber = readingPosition['surahNumber'] as int? ?? 1;
+      final ayahIndex = readingPosition['ayahIndex'] as int? ?? 0;
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AyahReadingScreen(
+            surahNumber: surahNumber,
+            initialAyahIndex: ayahIndex,
+          ),
+        ),
+      );
+    } else {
+      // Start from the beginning if no reading position
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AyahReadingScreen(
+            surahNumber: 1,
+            initialAyahIndex: 0,
+          ),
+        ),
+      );
+    }
   }
 }
 

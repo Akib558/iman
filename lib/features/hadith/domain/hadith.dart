@@ -1,3 +1,5 @@
+enum HadithLanguage { arabic, bangla, english }
+
 class HadithSection {
   final String id;
   final String title;

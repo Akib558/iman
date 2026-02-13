@@ -3,8 +3,6 @@ import 'package:prayer_app/importanFiles/ara-bukhari.dart';
 import 'package:prayer_app/importanFiles/ben-bukhari.dart';
 import 'package:prayer_app/importanFiles/eng-bukhari.dart';
 
-enum HadithLanguage { arabic, bangla, english }
-
 class HadithRepository {
   List<HadithSection> getSections() {
     final metadata = ara_bukhari[0]["metadata"] as Map<String, dynamic>;
